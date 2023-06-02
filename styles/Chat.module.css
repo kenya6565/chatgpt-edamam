@@ -1,0 +1,31 @@
+.chatContainer {
+  display: flex;
+  flex-direction: column;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 1em;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+}
+
+.message {
+  margin: 0.5em 0;
+}
+
+.user {
+  color: #0070f3;
+}
+
+.assistant {
+  color: #333;
+}
+
+.inputContainer {
+  display: flex;
+  margin-top: 1em;
+}
+
+.inputContainer input {
+  flex-grow: 1;
+  margin-right: 1em;
+}
