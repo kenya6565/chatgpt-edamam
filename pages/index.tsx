@@ -1,7 +1,10 @@
-import React from 'react';
+import Chat from '../comonents/Chat';
 
-const index = () => {
-  return <div>index</div>;
-};
+const HomePage = () => (
+  <div>
+    <h1>Recipe Chatbot</h1>
+    <Chat />
+  </div>
+);
 
-export default index;
+export default HomePage;
