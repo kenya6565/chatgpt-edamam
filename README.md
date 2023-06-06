@@ -1,34 +1,54 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# チャットボットと Qiita 記事検索アプリケーション
 
-## Getting Started
+このプロジェクトは、Next.js, ChatGPT API, Qiita API を利用したアプリケーションで、ユーザーがテキストボックスに入力した情報に関連する記事を ChatGPT が理解し、Qiita API を通じて表示します。
 
-First, run the development server:
+## 開発環境構築
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
+1. リポジトリをクローンします:
+
+   ```
+   git clone https://github.com/kenya6565/qiita-gpt.git
+   ```
+
+2. プロジェクトのディレクトリに移動します:
+
+   ```
+   cd your-project-name
+   ```
+
+3. 依存関係をインストールします:
+
+   ```
+   npm install
+   ```
+
+## 環境変数の設定
+
+プロジェクトのルートに`.env.local`ファイルを作成し、以下の環境変数を設定します:
+
+```
+OPENAI_API_KEY=your_openai_api_key
+QIITA_API_KEY=your_qiita_api_key
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 開発サーバーの起動
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+開発サーバーを起動します:
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+```
+npm run dev
+```
 
-## Learn More
+ブラウザで[http://localhost:3000](http://localhost:3000)を開きます。変更すると、ページはリロードされます。
 
-To learn more about Next.js, take a look at the following resources:
+## デプロイ
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+[Vercel](https://vercel.com)、[Netlify](https://www.netlify.com/)、あるいはその他の Next.js をサポートするホスティングプラットフォームを利用して、本番環境にデプロイできます。
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+## 使用技術
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+- [Next.js](https://nextjs.org/)
+- [TypeScript](https://www.typescriptlang.org/)
+- [Material-UI](https://mui.com/)
+- [ChatGPT API](https://beta.openai.com/)
+- [Qiita API](https://qiita.com/api/v2/docs)
