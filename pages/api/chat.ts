@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { OpenAIApi, Configuration } from 'openai';
+import axios from 'axios';
 
 // OpenAI API の設定を作成
 const configuration = new Configuration({
@@ -23,9 +24,28 @@ export default async function handler(
       max_tokens: maxTokens,
     });
 
-    // Here you might call Edamam API with user's message, parse the result, and include it in your GPT-3's messages.
+    // Check if data exists in the response
+    if (!gptResponse.data.choices[0].text) {
+      res.status(500).json({ error: 'Unexpected response from GPT-3' });
+      return;
+    }
 
-    res.status(200).json({ chat: gptResponse.data });
+    // Use the ChatGPT response as a keyword to search articles on Qiita
+    const keyword = gptResponse.data.choices[0].text.trim();
+
+    const qiitaResponse = await axios.get(
+      `https://qiita.com/api/v2/items?page=1&per_page=10&query=${keyword}`,
+      {
+        headers: {
+          Authorization: `Bearer ${process.env.QIITA_API_KEY}`,
+        },
+      },
+    );
+
+    // Return both the chat response and the articles
+    res
+      .status(200)
+      .json({ chat: gptResponse.data, articles: qiitaResponse.data });
   } else {
     res.status(405).end(); // Method Not Allowed
   }
