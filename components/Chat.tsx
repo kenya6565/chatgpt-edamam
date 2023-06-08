@@ -19,10 +19,11 @@ const Chat = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
 
+  // declare this method is asynchronous by async
   const sendMessage = async () => {
     const userMessage: Message = { role: 'user', content: input };
 
-    // Send user message to server
+    // Send user message to server(chat.ts)
     const res = await fetch('/api/chat', {
       method: 'POST',
       headers: {
