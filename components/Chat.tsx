@@ -24,6 +24,7 @@ const Chat = () => {
     const userMessage: Message = { role: 'user', content: input };
 
     // Send user message to server(chat.ts)
+    // waiting until getting response
     const res = await fetch('/api/chat', {
       method: 'POST',
       headers: {
@@ -32,6 +33,7 @@ const Chat = () => {
       body: JSON.stringify({ message: userMessage.content }),
     });
 
+    // convert json type
     const data = await res.json();
 
     const assistantMessage: Message = {

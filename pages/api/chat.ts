@@ -18,6 +18,7 @@ export default async function handler(
     const prompt = req.body.message;
     const maxTokens = 60;
 
+    // send request towards Open API
     const gptResponse = await openai.createCompletion({
       model: 'text-davinci-003',
       prompt: prompt,
@@ -33,6 +34,7 @@ export default async function handler(
     // Use the ChatGPT response as a keyword to search articles on Qiita
     const keyword = gptResponse.data.choices[0].text.trim();
 
+    // send request towards Qiita API with response of Open API
     const qiitaResponse = await axios.get(
       `https://qiita.com/api/v2/items?page=1&per_page=10&query=${keyword}`,
       {
