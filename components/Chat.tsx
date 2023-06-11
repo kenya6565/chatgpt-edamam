@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import theme from '../src/theme';
 import {
   TextField,
@@ -16,16 +16,13 @@ type Message = {
 };
 
 const Chat = () => {
-  const [userMessages, setUserMessages] = useState<Message[]>([]);
-  const [assistantMessages, setAssistantMessages] = useState<Message[]>([]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
+  const [assistantText, setAssistantText] = useState('');
 
-  // declare this method is asynchronous by async
-  const sendMessage = async () => {
+  const sendMessageToOpenAI = async () => {
     const userMessage: Message = { role: 'user', content: input };
 
-    // Send user message to server(chat.ts)
-    // waiting until getting response
     const res = await fetch('/api/chat', {
       method: 'POST',
       headers: {
@@ -34,32 +31,38 @@ const Chat = () => {
       body: JSON.stringify({ message: userMessage.content }),
     });
 
-    // convert json type
     const data = await res.json();
 
-    const assistantMessage: Message = {
-      role: 'assistant',
-      content: data.chat.choices[0].text.trim(),
+    setAssistantText(data.chat.choices[0].text.trim());
+
+    setMessages([...messages, userMessage]);
+  };
+
+  useEffect(() => {
+    const fetchArticles = async () => {
+      if (assistantText !== '') {
+        const res = await fetch('/api/qiita', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ keyword: assistantText }),
+        });
+
+        const data = await res.json();
+
+        data.articles.forEach((article: any) => {
+          const articleMessage: Message = {
+            role: 'assistant',
+            content: `Title: ${article.title}, URL: ${article.url}`,
+          };
+          setMessages((prevMessages) => [...prevMessages, articleMessage]);
+        });
+      }
     };
 
-    // Add user message to the user chat
-    setUserMessages([...userMessages, userMessage]);
-
-    // Add assistant message to the assistant chat
-    setAssistantMessages([...assistantMessages, assistantMessage]);
-
-    // Add Qiita articles to the assistant chat
-    data.articles.forEach((article: any) => {
-      const articleMessage: Message = {
-        role: 'assistant',
-        content: `Title: ${article.title}, URL: ${article.url}`,
-      };
-      setAssistantMessages((prevMessages) => [...prevMessages, articleMessage]);
-    });
-
-    // Clear input field
-    setInput('');
-  };
+    fetchArticles();
+  }, [assistantText]);
 
   return (
     <ThemeProvider theme={theme}>
@@ -68,15 +71,7 @@ const Chat = () => {
           どのような記事をお探しですか？
         </Typography>
         <List>
-          {userMessages.map((message, index) => (
-            <ListItem key={index}>
-              <ListItemText
-                primary={message.role}
-                secondary={message.content}
-              />
-            </ListItem>
-          ))}
-          {assistantMessages.map((message, index) => (
+          {messages.map((message, index) => (
             <ListItem key={index}>
               <ListItemText
                 primary={message.role}
@@ -95,7 +90,7 @@ const Chat = () => {
           <Button
             variant="contained"
             color="primary"
-            onClick={sendMessage}
+            onClick={sendMessageToOpenAI}
             style={{ marginLeft: '10px' }}
           >
             Send
