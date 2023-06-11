@@ -16,7 +16,8 @@ type Message = {
 };
 
 const Chat = () => {
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [userMessages, setUserMessages] = useState<Message[]>([]);
+  const [assistantMessages, setAssistantMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
 
   // declare this method is asynchronous by async
@@ -41,16 +42,19 @@ const Chat = () => {
       content: data.chat.choices[0].text.trim(),
     };
 
-    // Add user and assistant messages to the chat
-    setMessages([...messages, userMessage, assistantMessage]);
+    // Add user message to the user chat
+    setUserMessages([...userMessages, userMessage]);
 
-    // Add Qiita articles to the chat
+    // Add assistant message to the assistant chat
+    setAssistantMessages([...assistantMessages, assistantMessage]);
+
+    // Add Qiita articles to the assistant chat
     data.articles.forEach((article: any) => {
       const articleMessage: Message = {
         role: 'assistant',
         content: `Title: ${article.title}, URL: ${article.url}`,
       };
-      setMessages((prevMessages) => [...prevMessages, articleMessage]);
+      setAssistantMessages((prevMessages) => [...prevMessages, articleMessage]);
     });
 
     // Clear input field
@@ -64,7 +68,15 @@ const Chat = () => {
           どのような記事をお探しですか？
         </Typography>
         <List>
-          {messages.map((message, index) => (
+          {userMessages.map((message, index) => (
+            <ListItem key={index}>
+              <ListItemText
+                primary={message.role}
+                secondary={message.content}
+              />
+            </ListItem>
+          ))}
+          {assistantMessages.map((message, index) => (
             <ListItem key={index}>
               <ListItemText
                 primary={message.role}
