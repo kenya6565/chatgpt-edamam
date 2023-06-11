@@ -12,12 +12,16 @@
   margin: 0.5em 0;
 }
 
-.user {
-  color: #0070f3;
+.userMessage {
+  /* ユーザーメッセージ用のスタイルを定義 */
+  text-align: left;
+  background-color: #f0f0f0;
 }
 
-.assistant {
-  color: #333;
+.assistantMessage {
+  /* アシスタントメッセージ用のスタイルを定義 */
+  text-align: right;
+  background-color: #d0d0d0;
 }
 
 .inputContainer {
