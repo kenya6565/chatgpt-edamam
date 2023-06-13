@@ -15,7 +15,7 @@ export default async function handler(
 ) {
   if (req.method === 'POST') {
     const prompt = req.body.message;
-    const maxTokens = 60;
+    const maxTokens = 300;
 
     // send request towards Open API
     const gptResponse = await openai.createCompletion({
