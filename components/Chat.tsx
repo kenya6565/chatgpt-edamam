@@ -18,6 +18,7 @@ type Message = {
 const Chat = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
+  const [assistantRawText, setAssistantRawText] = useState('');
   const [assistantText, setAssistantText] = useState('');
 
   const sendMessageToOpenAI = async () => {
@@ -32,7 +33,7 @@ const Chat = () => {
     });
 
     const data = await res.json();
-
+    setAssistantRawText(data.chat.choices[0].text);
     setAssistantText(data.chat.choices[0].text.trim());
 
     setMessages([...messages, userMessage]);
@@ -75,7 +76,11 @@ const Chat = () => {
             <ListItem key={index}>
               <ListItemText
                 primary={message.role}
-                secondary={message.content}
+                secondary={
+                  message.role === 'assistant'
+                    ? assistantRawText
+                    : message.content
+                }
               />
             </ListItem>
           ))}
