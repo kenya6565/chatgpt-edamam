@@ -28,6 +28,9 @@ const Chat = () => {
 
   const sendMessageToOpenAI = async () => {
     const userMessage: Message = { role: 'user', content: input };
+    setMessages([userMessage]);
+    setOpenAPIResponse(null);
+    setQiitaAPIResponse([]);
 
     // send the user input to both OpenAPI and Qiita API
     const resOpenAPI = await fetch('/api/chat', {
@@ -62,7 +65,7 @@ const Chat = () => {
       return articleMessage;
     });
 
-    setMessages([...messages, userMessage]);
+    setMessages([userMessage]);
     setOpenAPIResponse(openAPIResponse);
     setQiitaAPIResponse(qiitaArticles);
   };
