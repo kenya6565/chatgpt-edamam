@@ -15,11 +15,16 @@ type Message = {
   content: string;
 };
 
+type Article = {
+  title: string;
+  url: string;
+};
+
 const Chat = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
-  const [openAPIResponse, setOpenAPIResponse] = useState('');
-  const [qiitaAPIResponse, setQiitaAPIResponse] = useState('');
+  const [openAPIResponse, setOpenAPIResponse] = useState<Message | null>(null);
+  const [qiitaAPIResponse, setQiitaAPIResponse] = useState<Message[]>([]);
 
   const sendMessageToOpenAI = async () => {
     const userMessage: Message = { role: 'user', content: input };
@@ -44,9 +49,12 @@ const Chat = () => {
     const dataOpenAPI = await resOpenAPI.json();
     const dataQiitaAPI = await resQiitaAPI.json();
 
-    setOpenAPIResponse(dataOpenAPI.chat.choices[0].text.trim());
+    const openAPIResponse: Message = {
+      role: 'assistant',
+      content: dataOpenAPI.chat.choices[0].text,
+    };
 
-    const qiitaArticles = dataQiitaAPI.articles.map((article: any) => {
+    const qiitaArticles = dataQiitaAPI.articles.map((article: Article) => {
       const articleMessage: Message = {
         role: 'assistant',
         content: `Title: ${article.title}, URL: ${article.url}`,
@@ -54,7 +62,9 @@ const Chat = () => {
       return articleMessage;
     });
 
-    setMessages([...messages, userMessage, ...qiitaArticles]);
+    setMessages([...messages, userMessage]);
+    setOpenAPIResponse(openAPIResponse);
+    setQiitaAPIResponse(qiitaArticles);
   };
 
   return (
@@ -65,6 +75,22 @@ const Chat = () => {
         </Typography>
         <List>
           {messages.map((message, index) => (
+            <ListItem key={index}>
+              <ListItemText
+                primary={message.role}
+                secondary={message.content}
+              />
+            </ListItem>
+          ))}
+          {openAPIResponse && (
+            <ListItem>
+              <ListItemText
+                primary={openAPIResponse.role}
+                secondary={openAPIResponse.content}
+              />
+            </ListItem>
+          )}
+          {qiitaAPIResponse.map((message, index) => (
             <ListItem key={index}>
               <ListItemText
                 primary={message.role}
@@ -92,5 +118,4 @@ const Chat = () => {
     </ThemeProvider>
   );
 };
-
 export default Chat;
