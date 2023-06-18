@@ -22,7 +22,7 @@ type Article = {
 const Chat = () => {
   const [input, setInput] = useState('');
   const [openAPIResponse, setOpenAPIResponse] = useState<Message | null>(null);
-  const [qiitaAPIResponse, setQiitaAPIResponse] = useState<Message[]>([]);
+  const [qiitaAPIResponse, setQiitaAPIResponse] = useState<Article[]>([]);
 
   const sendMessageToOpenAI = async () => {
     // Reset the state before sending the new request
@@ -53,10 +53,7 @@ const Chat = () => {
     };
 
     const qiitaArticles = dataQiitaAPI.articles.map((article: Article) => {
-      const articleMessage: Message = {
-        content: `Title: ${article.title}, URL: ${article.url}`,
-      };
-      return articleMessage;
+      return article;
     });
 
     setOpenAPIResponse(openAPIResponse);
@@ -93,9 +90,15 @@ const Chat = () => {
           <>
             <Typography variant="h6">Qiita</Typography>
             <List>
-              {qiitaAPIResponse.map((message, index) => (
+              {qiitaAPIResponse.map((article, index) => (
                 <ListItem key={index}>
-                  <ListItemText primary={message.content} />
+                  <a
+                    href={article.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Title: {article.title}
+                  </a>
                 </ListItem>
               ))}
             </List>
