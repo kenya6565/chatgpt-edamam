@@ -78,7 +78,7 @@ const Chat = () => {
           color="primary"
           onClick={sendMessageToOpenAI}
         >
-          Send
+          検索
         </Button>
         {openAPIResponse && (
           <>
@@ -97,7 +97,7 @@ const Chat = () => {
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    Title: {article.title}
+                    タイトル: {article.title}
                   </a>
                 </ListItem>
               ))}
