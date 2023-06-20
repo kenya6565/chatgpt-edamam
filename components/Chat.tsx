@@ -8,6 +8,10 @@ import {
   ListItemText,
   Typography,
   ThemeProvider,
+  Paper,
+  Box,
+  Grid,
+  Link,
 } from '@mui/material';
 
 type Message = {
@@ -62,51 +66,65 @@ const Chat = () => {
 
   return (
     <ThemeProvider theme={theme}>
-      <div>
-        <Typography variant="h4" component="h1" gutterBottom>
-          どのような記事をお探しですか？
-        </Typography>
-        <Typography variant="h6">検索されたワード: {input}</Typography>
-        <TextField
-          fullWidth
-          variant="outlined"
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-        />
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={sendMessageToOpenAI}
-        >
-          検索
-        </Button>
-        {openAPIResponse && (
-          <>
-            <Typography variant="h6">ChatGPT</Typography>
-            <ListItemText primary={openAPIResponse.content} />
-          </>
-        )}
+      <Grid container spacing={2}>
+        <Grid item xs={12}>
+          <Paper elevation={3}>
+            <Box p={2}>
+              <Typography variant="h4" component="h1" gutterBottom>
+                どのような記事をお探しですか？
+              </Typography>
+              <TextField
+                fullWidth
+                variant="outlined"
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+              />
+              <Box mt={2}>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={sendMessageToOpenAI}
+                >
+                  Send
+                </Button>
+              </Box>
+              {openAPIResponse && (
+                <>
+                  <Typography variant="h6" gutterBottom>
+                    ChatGPT
+                  </Typography>
+                  <ListItemText primary={openAPIResponse.content} />
+                </>
+              )}
+            </Box>
+          </Paper>
+        </Grid>
         {qiitaAPIResponse.length > 0 && (
-          <>
-            <Typography variant="h6">Qiita</Typography>
-            <List>
-              {qiitaAPIResponse.map((article, index) => (
-                <ListItem key={index}>
-                  <a
-                    href={article.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    タイトル: {article.title}
-                  </a>
-                </ListItem>
-              ))}
-            </List>
-          </>
+          <Grid item xs={12}>
+            <Paper elevation={3}>
+              <Box p={2}>
+                <Typography variant="h6" gutterBottom>
+                  Qiita
+                </Typography>
+                <List>
+                  {qiitaAPIResponse.map((article, index) => (
+                    <ListItem key={index}>
+                      <Link
+                        href={article.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        {article.title}
+                      </Link>
+                    </ListItem>
+                  ))}
+                </List>
+              </Box>
+            </Paper>
+          </Grid>
         )}
-      </div>
+      </Grid>
     </ThemeProvider>
   );
 };
-
 export default Chat;
