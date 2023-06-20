@@ -41,23 +41,37 @@ const Chat = () => {
       body: JSON.stringify({ message: input }),
     });
 
-    const resQiitaAPI = await fetch('/api/qiita', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
+    const resQiitaAPI = await fetch(
+      `https://qiita.com/api/v2/items?query=${input}`,
+      {
+        method: 'GET',
       },
-      body: JSON.stringify({ keyword: input }),
-    });
+    );
 
-    const dataOpenAPI = await resOpenAPI.json();
-    const dataQiitaAPI = await resQiitaAPI.json();
+    let dataOpenAPI;
+    let dataQiitaAPI;
+
+    try {
+      dataOpenAPI = await resOpenAPI.json();
+    } catch (err) {
+      console.error('Failed to parse Open AI response:', err);
+    }
+
+    try {
+      dataQiitaAPI = await resQiitaAPI.json();
+    } catch (err) {
+      console.error('Failed to parse Qiita response:', err);
+    }
 
     const openAPIResponse: Message = {
       content: dataOpenAPI.chat.choices[0].text,
     };
 
-    const qiitaArticles = dataQiitaAPI.articles.map((article: Article) => {
-      return article;
+    const qiitaArticles: Article[] = dataQiitaAPI.map((article: Article) => {
+      return {
+        title: article.title,
+        url: article.url,
+      };
     });
 
     setOpenAPIResponse(openAPIResponse);
@@ -100,28 +114,26 @@ const Chat = () => {
           </Paper>
         </Grid>
         {qiitaAPIResponse.length > 0 && (
-          <Grid item xs={12}>
-            <Paper elevation={3}>
-              <Box p={2}>
-                <Typography variant="h6" gutterBottom>
-                  Qiita
-                </Typography>
-                <List>
-                  {qiitaAPIResponse.map((article, index) => (
-                    <ListItem key={index}>
-                      <Link
+          <>
+            <Typography variant="h6">Qiita</Typography>
+            <List>
+              {qiitaAPIResponse.map((article, index) => (
+                <ListItem key={index}>
+                  <ListItemText>
+                    <Typography variant="body1">
+                      <a
                         href={article.url}
                         target="_blank"
                         rel="noopener noreferrer"
                       >
                         {article.title}
-                      </Link>
-                    </ListItem>
-                  ))}
-                </List>
-              </Box>
-            </Paper>
-          </Grid>
+                      </a>
+                    </Typography>
+                  </ListItemText>
+                </ListItem>
+              ))}
+            </List>
+          </>
         )}
       </Grid>
     </ThemeProvider>
