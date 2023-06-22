@@ -67,12 +67,16 @@ const Chat = () => {
       content: dataOpenAPI.chat.choices[0].text,
     };
 
-    const qiitaArticles: Article[] = dataQiitaAPI.map((article: Article) => {
-      return {
-        title: article.title,
-        url: article.url,
-      };
-    });
+    const qiitaArticles: Article[] = dataQiitaAPI
+      .filter((article: Article) =>
+        article.title.toLowerCase().includes(input.toLowerCase()),
+      )
+      .map((article: Article) => {
+        return {
+          title: article.title,
+          url: article.url,
+        };
+      });
 
     setOpenAPIResponse(openAPIResponse);
     setQiitaAPIResponse(qiitaArticles);
