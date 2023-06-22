@@ -114,26 +114,30 @@ const Chat = () => {
           </Paper>
         </Grid>
         {qiitaAPIResponse.length > 0 && (
-          <>
-            <Typography variant="h6">Qiita</Typography>
-            <List>
-              {qiitaAPIResponse.map((article, index) => (
-                <ListItem key={index}>
-                  <ListItemText>
-                    <Typography variant="body1">
-                      <a
-                        href={article.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        {article.title}
-                      </a>
-                    </Typography>
-                  </ListItemText>
-                </ListItem>
-              ))}
-            </List>
-          </>
+          <Grid item xs={12}>
+            <Paper elevation={3}>
+              <Box p={2}>
+                <Typography variant="h6">Qiita</Typography>
+                <List>
+                  {qiitaAPIResponse.map((article, index) => (
+                    <ListItem key={index}>
+                      <ListItemText>
+                        <Typography variant="body1">
+                          <a
+                            href={article.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            {article.title}
+                          </a>
+                        </Typography>
+                      </ListItemText>
+                    </ListItem>
+                  ))}
+                </List>
+              </Box>
+            </Paper>
+          </Grid>
         )}
       </Grid>
     </ThemeProvider>
