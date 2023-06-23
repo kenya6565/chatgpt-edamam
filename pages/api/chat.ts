@@ -14,7 +14,8 @@ export default async function handler(
   res: NextApiResponse,
 ) {
   if (req.method === 'POST') {
-    const prompt = req.body.message;
+    const userInput = req.body.message;
+    const prompt = `${userInput}とは何ですか？分かりやすく日本語で答えてください。`;
     const maxTokens = 300;
 
     // send request towards Open API
