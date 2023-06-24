@@ -10,8 +10,7 @@ import {
   ThemeProvider,
   Paper,
   Box,
-  Grid,
-  Link,
+  Grid
 } from '@mui/material';
 
 type Message = {
@@ -101,6 +100,7 @@ const Chat = () => {
                 <Button
                   variant="contained"
                   color="primary"
+                  disabled={input === ''}
                   onClick={sendMessageToOpenAI}
                 >
                   Send
