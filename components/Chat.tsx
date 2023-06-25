@@ -10,7 +10,8 @@ import {
   ThemeProvider,
   Paper,
   Box,
-  Grid
+  Grid,
+  Divider,
 } from '@mui/material';
 
 type Message = {
@@ -95,6 +96,9 @@ const Chat = () => {
                 variant="outlined"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
+                InputProps={{
+                  autoComplete: 'off',
+                }}
               />
               <Box mt={2}>
                 <Button
@@ -121,22 +125,31 @@ const Chat = () => {
           <Grid item xs={12}>
             <Paper elevation={3}>
               <Box p={2}>
-                <Typography variant="h6">Qiita</Typography>
+                <Typography variant="h6" gutterBottom>
+                  Qiita
+                </Typography>
                 <List>
                   {qiitaAPIResponse.map((article, index) => (
-                    <ListItem key={index}>
-                      <ListItemText>
-                        <Typography variant="body1">
-                          <a
-                            href={article.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >
-                            {article.title}
-                          </a>
-                        </Typography>
-                      </ListItemText>
-                    </ListItem>
+                    <div key={index}>
+                      <ListItem>
+                        <ListItemText>
+                          <Typography variant="body1">
+                            <a
+                              href={article.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              style={{
+                                color: theme.palette.primary.main,
+                                textDecoration: 'none',
+                              }}
+                            >
+                              {article.title}
+                            </a>
+                          </Typography>
+                        </ListItemText>
+                      </ListItem>
+                      <Divider />
+                    </div>
                   ))}
                 </List>
               </Box>
