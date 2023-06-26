@@ -104,52 +104,49 @@ const Chat = () => {
                 <Button
                   variant="contained"
                   color="primary"
-                  disabled={input === ''}
                   onClick={sendMessageToOpenAI}
+                  disabled={input.length === 0}
                 >
                   Send
                 </Button>
               </Box>
-              {openAPIResponse && (
-                <>
-                  <Typography variant="h6" gutterBottom>
-                    ChatGPT
-                  </Typography>
-                  <ListItemText primary={openAPIResponse.content} />
-                </>
-              )}
             </Box>
           </Paper>
         </Grid>
-        {qiitaAPIResponse.length > 0 && (
+
+        {openAPIResponse && (
           <Grid item xs={12}>
             <Paper elevation={3}>
               <Box p={2}>
                 <Typography variant="h6" gutterBottom>
-                  Qiita
+                  ChatGPT
                 </Typography>
+                <ListItemText primary={openAPIResponse.content} />
+              </Box>
+            </Paper>
+          </Grid>
+        )}
+
+        {qiitaAPIResponse.length > 0 && (
+          <Grid item xs={12}>
+            <Paper elevation={3}>
+              <Box p={2}>
+                <Typography variant="h6">Qiita</Typography>
                 <List>
                   {qiitaAPIResponse.map((article, index) => (
-                    <div key={index}>
-                      <ListItem>
-                        <ListItemText>
-                          <Typography variant="body1">
-                            <a
-                              href={article.url}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              style={{
-                                color: theme.palette.primary.main,
-                                textDecoration: 'none',
-                              }}
-                            >
-                              {article.title}
-                            </a>
-                          </Typography>
-                        </ListItemText>
-                      </ListItem>
-                      <Divider />
-                    </div>
+                    <ListItem key={index} divider>
+                      <ListItemText>
+                        <Typography variant="body1">
+                          <a
+                            href={article.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            {article.title}
+                          </a>
+                        </Typography>
+                      </ListItemText>
+                    </ListItem>
                   ))}
                 </List>
               </Box>
