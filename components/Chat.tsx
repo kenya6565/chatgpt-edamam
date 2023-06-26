@@ -1,3 +1,4 @@
+import React, { Fragment } from 'react';
 import { useState } from 'react';
 import theme from '../src/theme';
 import {
@@ -11,6 +12,9 @@ import {
   Paper,
   Box,
   Grid,
+  CircularProgress,
+  Divider,
+  Container,
 } from '@mui/material';
 
 type Message = {
@@ -24,6 +28,7 @@ type Article = {
 
 const Chat = () => {
   const [input, setInput] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const [openAPIResponse, setOpenAPIResponse] = useState<Message | null>(null);
   const [qiitaAPIResponse, setQiitaAPIResponse] = useState<Article[]>([]);
 
@@ -31,6 +36,7 @@ const Chat = () => {
     // Reset the state before sending the new request
     setOpenAPIResponse(null);
     setQiitaAPIResponse([]);
+    setIsLoading(true);
 
     const resOpenAPI = await fetch('/api/chat', {
       method: 'POST',
@@ -79,80 +85,102 @@ const Chat = () => {
 
     setOpenAPIResponse(openAPIResponse);
     setQiitaAPIResponse(qiitaArticles);
+    setIsLoading(false);
   };
 
   return (
     <ThemeProvider theme={theme}>
-      <Grid container spacing={2} justifyContent="center">
-        <Grid item xs={12} sm={8} md={5}>
-          <Paper elevation={3}>
-            <Box p={2}>
-              <Typography variant="h4" component="h1" gutterBottom>
-                どのような記事をお探しですか？
-              </Typography>
-              <TextField
-                fullWidth
-                variant="outlined"
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                InputProps={{
-                  autoComplete: 'off',
-                }}
-              />
-              <Box mt={2}>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={sendMessageToOpenAI}
-                  disabled={input.length === 0}
-                >
-                  Send
-                </Button>
-              </Box>
-            </Box>
-          </Paper>
-        </Grid>
-
-        {openAPIResponse && (
-          <Grid item xs={12} sm={8} md={5}>
-            <Paper elevation={3}>
-              <Box p={2}>
-                <Typography variant="h6" gutterBottom>
-                  ChatGPT
-                </Typography>
-                <ListItemText primary={openAPIResponse.content} />
-              </Box>
-            </Paper>
-          </Grid>
-        )}
-
-        {qiitaAPIResponse.length > 0 && (
+      <Container>
+        <Grid container spacing={2} justifyContent="center">
           <Grid item xs={12} sm={8} md={10}>
             <Paper elevation={3}>
               <Box p={2}>
-                <Typography variant="h6">Qiita</Typography>
-                <List>
-                  {qiitaAPIResponse.map((article, index) => (
-                    <ListItem key={index} divider>
-                      <ListItemText>
-                        <Typography variant="body1">
-                          <a
-                            href={article.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >
-                            {article.title}
-                          </a>
-                        </Typography>
-                      </ListItemText>
-                    </ListItem>
-                  ))}
-                </List>
+                <Typography variant="h4" component="h1" gutterBottom>
+                  どのような記事をお探しですか？
+                </Typography>
+                <TextField
+                  fullWidth
+                  variant="outlined"
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  InputProps={{
+                    autoComplete: 'off',
+                  }}
+                />
+                <Box mt={2}>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={sendMessageToOpenAI}
+                    disabled={input.length === 0}
+                  >
+                    Send
+                  </Button>
+                </Box>
               </Box>
             </Paper>
           </Grid>
-        )}
-      </Grid>
+          {isLoading && (
+            <Box
+              display="flex"
+              justifyContent="center"
+              alignItems="center"
+              height="200px"
+            >
+              <CircularProgress />
+              <Typography ml={2}>少々お待ちください...</Typography>
+            </Box>
+          )}
+
+          {openAPIResponse && (
+            <Grid item xs={12} sm={8} md={10}>
+              <Paper elevation={3}>
+                <Box p={2}>
+                  <Typography variant="h6" gutterBottom>
+                    ChatGPT
+                  </Typography>
+                  <ListItemText primary={openAPIResponse.content} />
+                </Box>
+              </Paper>
+            </Grid>
+          )}
+
+          {qiitaAPIResponse.length > 0 && (
+            <Grid item xs={12} sm={8} md={10}>
+              <Paper elevation={3}>
+                <Box p={2}>
+                  <Typography variant="h6" component="h2" gutterBottom>
+                    Qiita
+                  </Typography>
+                  <Divider />
+                  <List>
+                    {qiitaAPIResponse.map((article, index) => (
+                      <Fragment key={index}>
+                        <ListItem>
+                          <ListItemText
+                            primary={
+                              <Typography variant="body1">
+                                <a
+                                  href={article.url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                >
+                                  {article.title}
+                                </a>
+                              </Typography>
+                            }
+                          />
+                        </ListItem>
+                        <Divider />
+                      </Fragment>
+                    ))}
+                  </List>
+                </Box>
+              </Paper>
+            </Grid>
+          )}
+        </Grid>
+      </Container>
     </ThemeProvider>
   );
 };
