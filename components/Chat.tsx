@@ -11,7 +11,6 @@ import {
   Paper,
   Box,
   Grid,
-  Divider,
 } from '@mui/material';
 
 type Message = {
@@ -84,8 +83,8 @@ const Chat = () => {
 
   return (
     <ThemeProvider theme={theme}>
-      <Grid container spacing={2}>
-        <Grid item xs={12}>
+      <Grid container spacing={2} justifyContent="center">
+        <Grid item xs={12} sm={8} md={5}>
           <Paper elevation={3}>
             <Box p={2}>
               <Typography variant="h4" component="h1" gutterBottom>
@@ -115,7 +114,7 @@ const Chat = () => {
         </Grid>
 
         {openAPIResponse && (
-          <Grid item xs={12}>
+          <Grid item xs={12} sm={8} md={5}>
             <Paper elevation={3}>
               <Box p={2}>
                 <Typography variant="h6" gutterBottom>
@@ -128,7 +127,7 @@ const Chat = () => {
         )}
 
         {qiitaAPIResponse.length > 0 && (
-          <Grid item xs={12}>
+          <Grid item xs={12} sm={8} md={10}>
             <Paper elevation={3}>
               <Box p={2}>
                 <Typography variant="h6">Qiita</Typography>
