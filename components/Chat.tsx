@@ -93,6 +93,17 @@ const Chat = () => {
       <Container>
         <Grid container spacing={2} justifyContent="center">
           <Grid item xs={12} sm={8} md={10}>
+            <Typography
+              align="center"
+              style={{
+                fontFamily: 'Roboto',
+                fontSize: '2em',
+                fontWeight: 'bold',
+                marginTop: '20px',
+              }}
+            >
+              Qiita GPT
+            </Typography>
             <Paper elevation={3}>
               <Box p={2}>
                 <Typography variant="h4" component="h1" gutterBottom>
