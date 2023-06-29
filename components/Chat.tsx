@@ -15,6 +15,7 @@ import {
   CircularProgress,
   Divider,
   Container,
+  Alert,
 } from '@mui/material';
 
 type Message = {
@@ -31,8 +32,16 @@ const Chat = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [openAPIResponse, setOpenAPIResponse] = useState<Message | null>(null);
   const [qiitaAPIResponse, setQiitaAPIResponse] = useState<Article[]>([]);
+  const [error, setError] = useState<string | null>(null);
 
   const sendMessageToOpenAI = async () => {
+    setError(null);
+
+    if (input.length === 0) {
+      setError('Please enter a search term.');
+      return;
+    }
+
     // Reset the state before sending the new request
     setOpenAPIResponse(null);
     setQiitaAPIResponse([]);
@@ -56,35 +65,35 @@ const Chat = () => {
     let dataOpenAPI;
     let dataQiitaAPI;
 
-    try {
-      dataOpenAPI = await resOpenAPI.json();
-    } catch (err) {
-      console.error('Failed to parse Open AI response:', err);
+    if (resOpenAPI.ok && resQiitaAPI.ok) {
+      try {
+        dataOpenAPI = await resOpenAPI.json();
+        dataQiitaAPI = await resQiitaAPI.json();
+      } catch (err) {
+        console.error('Failed to parse response:', err);
+      }
+
+      const openAPIResponse: Message = {
+        content: dataOpenAPI.chat.choices[0].text,
+      };
+
+      const qiitaArticles: Article[] = dataQiitaAPI
+        .filter((article: Article) =>
+          article.title.toLowerCase().includes(input.toLowerCase()),
+        )
+        .map((article: Article) => {
+          return {
+            title: article.title,
+            url: article.url,
+          };
+        });
+
+      setOpenAPIResponse(openAPIResponse);
+      setQiitaAPIResponse(qiitaArticles);
+    } else {
+      setError('Something went wrong. Please try again.');
     }
 
-    try {
-      dataQiitaAPI = await resQiitaAPI.json();
-    } catch (err) {
-      console.error('Failed to parse Qiita response:', err);
-    }
-
-    const openAPIResponse: Message = {
-      content: dataOpenAPI.chat.choices[0].text,
-    };
-
-    const qiitaArticles: Article[] = dataQiitaAPI
-      .filter((article: Article) =>
-        article.title.toLowerCase().includes(input.toLowerCase()),
-      )
-      .map((article: Article) => {
-        return {
-          title: article.title,
-          url: article.url,
-        };
-      });
-
-    setOpenAPIResponse(openAPIResponse);
-    setQiitaAPIResponse(qiitaArticles);
     setIsLoading(false);
   };
 
@@ -117,31 +126,24 @@ const Chat = () => {
                   InputProps={{
                     autoComplete: 'off',
                   }}
+                  placeholder="例：React"
                 />
+                {error && <Alert severity="error">{error}</Alert>}{' '}
+                {/* Show error if present */}
                 <Box mt={2}>
                   <Button
                     variant="contained"
                     color="primary"
                     onClick={sendMessageToOpenAI}
-                    disabled={input.length === 0}
+                    disabled={isLoading || input.length === 0} // Disable button during loading
                   >
-                    Send
+                    {isLoading ? <CircularProgress size={24} /> : 'Send'}{' '}
+                    {/* Show loading indicator */}
                   </Button>
                 </Box>
               </Box>
             </Paper>
           </Grid>
-          {isLoading && (
-            <Box
-              display="flex"
-              justifyContent="center"
-              alignItems="center"
-              height="200px"
-            >
-              <CircularProgress />
-              <Typography ml={2}>少々お待ちください...</Typography>
-            </Box>
-          )}
 
           {openAPIResponse && (
             <Grid item xs={12} sm={8} md={10}>
@@ -186,6 +188,19 @@ const Chat = () => {
                       </Fragment>
                     ))}
                   </List>
+                </Box>
+              </Paper>
+            </Grid>
+          )}
+
+          {/* Show a message if no results were found */}
+          {!isLoading && !openAPIResponse && !error && input.length > 0 && (
+            <Grid item xs={12} sm={8} md={10}>
+              <Paper elevation={3}>
+                <Box p={2}>
+                  <Typography variant="h6">
+                    ごめんなさい、お探しの結果は見つかりませんでした。
+                  </Typography>
                 </Box>
               </Paper>
             </Grid>
