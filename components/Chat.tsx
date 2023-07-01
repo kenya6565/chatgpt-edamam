@@ -129,7 +129,6 @@ const Chat = () => {
                   placeholder="例：React"
                 />
                 {error && <Alert severity="error">{error}</Alert>}{' '}
-                {/* Show error if present */}
                 <Box mt={2}>
                   <Button
                     variant="contained"
@@ -194,17 +193,20 @@ const Chat = () => {
           )}
 
           {/* Show a message if no results were found */}
-          {!isLoading && !openAPIResponse && !error && input.length > 0 && (
-            <Grid item xs={12} sm={8} md={10}>
-              <Paper elevation={3}>
-                <Box p={2}>
-                  <Typography variant="h6">
-                    ごめんなさい、お探しの結果は見つかりませんでした。
-                  </Typography>
-                </Box>
-              </Paper>
-            </Grid>
-          )}
+          {!isLoading &&
+            qiitaAPIResponse.length === 0 &&
+            !error &&
+            input.length > 0 && (
+              <Grid item xs={12} sm={8} md={10}>
+                <Paper elevation={3}>
+                  <Box p={2}>
+                    <Typography variant="h6">
+                      ごめんなさい、Qiitaではお探しの結果は見つかりませんでした。
+                    </Typography>
+                  </Box>
+                </Paper>
+              </Grid>
+            )}
         </Grid>
       </Container>
     </ThemeProvider>
