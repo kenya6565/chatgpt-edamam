@@ -111,7 +111,9 @@ const Chat = () => {
                 fontSize: '2em',
                 fontWeight: 'bold',
                 marginTop: '20px',
+                cursor: 'pointer',
               }}
+              onClick={() => window.location.reload()}
             >
               Qiita GPT
             </Typography>
