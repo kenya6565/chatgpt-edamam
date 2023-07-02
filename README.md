@@ -1,4 +1,4 @@
-# チャットボットと Qiita 記事検索アプリケーション
+# ChatGPTとQiita記事検索アプリケーション
 
 このプロジェクトは、Next.js, ChatGPT API, Qiita API を利用したアプリケーションで、ユーザーがテキストボックスに入力した情報に関連する記事を ChatGPT が理解し、Qiita API を通じて表示します。
 
