@@ -33,6 +33,7 @@ const Chat = () => {
   const [openAPIResponse, setOpenAPIResponse] = useState<Message | null>(null);
   const [qiitaAPIResponse, setQiitaAPIResponse] = useState<Article[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [searched, setSearched] = useState(false);
 
   const sendMessageToOpenAI = async () => {
     setError(null);
@@ -46,6 +47,7 @@ const Chat = () => {
     setOpenAPIResponse(null);
     setQiitaAPIResponse([]);
     setIsLoading(true);
+    setSearched(true);
 
     const resOpenAPI = await fetch('/api/chat', {
       method: 'POST',
@@ -126,23 +128,31 @@ const Chat = () => {
                   InputProps={{
                     autoComplete: 'off',
                   }}
-                  placeholder="例：React"
                 />
-                {error && <Alert severity="error">{error}</Alert>}{' '}
                 <Box mt={2}>
                   <Button
                     variant="contained"
                     color="primary"
                     onClick={sendMessageToOpenAI}
-                    disabled={isLoading || input.length === 0} // Disable button during loading
+                    disabled={input.length === 0}
                   >
-                    {isLoading ? <CircularProgress size={24} /> : 'Send'}{' '}
-                    {/* Show loading indicator */}
+                    Send
                   </Button>
                 </Box>
               </Box>
             </Paper>
           </Grid>
+          {isLoading && (
+            <Box
+              display="flex"
+              justifyContent="center"
+              alignItems="center"
+              height="200px"
+            >
+              <CircularProgress />
+              <Typography ml={2}>少々お待ちください...</Typography>
+            </Box>
+          )}
 
           {openAPIResponse && (
             <Grid item xs={12} sm={8} md={10}>
@@ -157,7 +167,7 @@ const Chat = () => {
             </Grid>
           )}
 
-          {qiitaAPIResponse.length > 0 && (
+          {searched && qiitaAPIResponse.length > 0 ? (
             <Grid item xs={12} sm={8} md={10}>
               <Paper elevation={3}>
                 <Box p={2}>
@@ -190,23 +200,21 @@ const Chat = () => {
                 </Box>
               </Paper>
             </Grid>
-          )}
-
-          {/* Show a message if no results were found */}
-          {!isLoading &&
-            qiitaAPIResponse.length === 0 &&
-            !error &&
-            input.length > 0 && (
-              <Grid item xs={12} sm={8} md={10}>
-                <Paper elevation={3}>
-                  <Box p={2}>
-                    <Typography variant="h6">
-                      ごめんなさい、Qiitaではお探しの結果は見つかりませんでした。
-                    </Typography>
-                  </Box>
-                </Paper>
-              </Grid>
-            )}
+          ) : searched && !isLoading && qiitaAPIResponse.length === 0 ? (
+            <Grid item xs={12} sm={8} md={10}>
+              <Paper elevation={3}>
+                <Box p={2}>
+                  <Typography variant="h6" component="h2" gutterBottom>
+                    Qiita
+                  </Typography>
+                  <Divider />
+                  <Typography variant="body1">
+                    ごめんなさい、Qiitaではお探しの結果は見つかりませんでした。
+                  </Typography>
+                </Box>
+              </Paper>
+            </Grid>
+          ) : null}
         </Grid>
       </Container>
     </ThemeProvider>
