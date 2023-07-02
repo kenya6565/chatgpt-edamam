@@ -11,6 +11,7 @@ const HomePage = () => {
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'center',
+          backgroundColor: '#000',
         }}
       >
         <Paper
@@ -18,7 +19,7 @@ const HomePage = () => {
           sx={{
             p: 4,
             textAlign: 'center',
-            background: 'linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)',
+            background: 'linear-gradient(45deg, #3d5afe 30%, #3d5afe 90%)',
           }}
         >
           <Typography
@@ -40,7 +41,7 @@ const HomePage = () => {
           <Link href="/chat" passHref>
             <Button
               variant="contained"
-              color="secondary"
+              color="warning"
               size="large"
               sx={{ mt: 3 }}
             >
