@@ -11,7 +11,7 @@ export default async function handler(
 
     // send request towards Qiita API with response of Open API
     const qiitaResponse = await axios.get(
-      `https://qiita.com/api/v2/items?page=1&per_page=10&query=${keyword}`,
+      `https://qiita.com/api/v2/items?page=1&per_page=100&query=${keyword}`,
       {
         headers: {
           Authorization: `Bearer ${process.env.QIITA_API_KEY}`,
