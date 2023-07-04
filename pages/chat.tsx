@@ -1,5 +1,5 @@
 import React, { Fragment } from 'react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import theme from '../src/theme';
 import {
   TextField,
@@ -34,6 +34,46 @@ const Chat = () => {
   const [qiitaAPIResponse, setQiitaAPIResponse] = useState<Article[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [searched, setSearched] = useState(false);
+  const [page, setPage] = useState(1);
+
+  useEffect(() => {
+    if (page > 1) {
+      const fetchQiita = async () => {
+        setIsLoading(true);
+        setSearched(true);
+
+        const resQiitaAPI = await fetch(
+          `https://qiita.com/api/v2/items?query=${input}&page=${page}`,
+          {
+            method: 'GET',
+          },
+        );
+
+        // Check for response status and update state with new data
+        if (resQiitaAPI.ok) {
+          const dataQiitaAPI = await resQiitaAPI.json();
+
+          const qiitaArticles: Article[] = dataQiitaAPI
+            .filter((article: Article) =>
+              article.title.toLowerCase().includes(input.toLowerCase()),
+            )
+            .map((article: Article) => {
+              return {
+                title: article.title,
+                url: article.url,
+              };
+            });
+
+          setQiitaAPIResponse(qiitaArticles);
+        } else {
+          setError('Something went wrong. Please try again.');
+        }
+
+        setIsLoading(false);
+      };
+      fetchQiita();
+    }
+  }, [page]);
 
   const sendMessageToOpenAI = async () => {
     setError(null);
@@ -58,7 +98,7 @@ const Chat = () => {
     });
 
     const resQiitaAPI = await fetch(
-      `https://qiita.com/api/v2/items?query=${input}`,
+      `https://qiita.com/api/v2/items?query=${input}&page=${page}`,
       {
         method: 'GET',
       },
@@ -97,6 +137,10 @@ const Chat = () => {
     }
 
     setIsLoading(false);
+  };
+
+  const goToNextPage = () => {
+    setPage(page + 1);
   };
 
   return (
@@ -156,7 +200,7 @@ const Chat = () => {
             </Box>
           )}
 
-          {openAPIResponse && (
+          {!isLoading && openAPIResponse && (
             <Grid item xs={12} sm={8} md={10}>
               <Paper elevation={3}>
                 <Box p={2}>
@@ -169,7 +213,7 @@ const Chat = () => {
             </Grid>
           )}
 
-          {searched && qiitaAPIResponse.length > 0 ? (
+          {!isLoading && searched && qiitaAPIResponse.length > 0 ? (
             <Grid item xs={12} sm={8} md={10}>
               <Paper elevation={3}>
                 <Box p={2}>
@@ -218,6 +262,7 @@ const Chat = () => {
             </Grid>
           ) : null}
         </Grid>
+        <Button onClick={goToNextPage}>次のページ</Button>
       </Container>
     </ThemeProvider>
   );
