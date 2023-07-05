@@ -15,7 +15,6 @@ import {
   CircularProgress,
   Divider,
   Container,
-  Alert,
 } from '@mui/material';
 
 type Message = {
