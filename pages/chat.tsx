@@ -261,7 +261,9 @@ const Chat = () => {
             </Grid>
           ) : null}
         </Grid>
-        <Button onClick={goToNextPage}>次のページ</Button>
+        {searched && qiitaAPIResponse.length > 0 && (
+          <Button onClick={goToNextPage}>次のページ</Button>
+        )}
       </Container>
     </ThemeProvider>
   );
