@@ -268,7 +268,7 @@ const Chat = () => {
             marginTop={2}
             marginBottom={2}
           >
-            {searched && qiitaAPIResponse.length > 0 && (
+            {!isLoading && searched && qiitaAPIResponse.length > 0 && (
               <Button
                 variant="contained"
                 color="primary"
