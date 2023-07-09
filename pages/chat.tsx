@@ -24,6 +24,8 @@ type Message = {
 type Article = {
   title: string;
   url: string;
+  created_at: string;
+  likes_count: number;
 };
 
 const Chat = () => {
@@ -126,6 +128,8 @@ const Chat = () => {
           return {
             title: article.title,
             url: article.url,
+            created_at: article.created_at,
+            likes_count: article.likes_count,
           };
         });
 
@@ -234,6 +238,14 @@ const Chat = () => {
                                 >
                                   {article.title}
                                 </a>
+                              </Typography>
+                            }
+                            secondary={
+                              <Typography variant="body2" color="textSecondary">
+                                {new Date(
+                                  article.created_at,
+                                ).toLocaleDateString()}{' '}
+                                • {article.likes_count}いいね
                               </Typography>
                             }
                           />
