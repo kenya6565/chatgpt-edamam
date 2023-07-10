@@ -62,6 +62,8 @@ const Chat = () => {
               return {
                 title: article.title,
                 url: article.url,
+                created_at: article.created_at,
+                likes_count: article.likes_count,
               };
             });
 
@@ -242,6 +244,7 @@ const Chat = () => {
                             }
                             secondary={
                               <Typography variant="body2" color="textSecondary">
+                                作成日:
                                 {new Date(
                                   article.created_at,
                                 ).toLocaleDateString()}{' '}
