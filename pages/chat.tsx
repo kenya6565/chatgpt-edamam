@@ -37,58 +37,59 @@ const Chat = () => {
   const [searched, setSearched] = useState(false);
   const [page, setPage] = useState(1);
 
+  const fetchArticlesFromQiita = async (
+    startIndex: number,
+    endIndex: number,
+  ) => {
+    setIsLoading(true);
+    setSearched(true);
+    let qiitaArticles: Article[] = [];
+
+    for (let i = 1; qiitaArticles.length < endIndex; i++) {
+      const resQiitaAPI = await fetch(
+        `https://qiita.com/api/v2/items?query=${input}&page=${i}`,
+        {
+          method: 'GET',
+        },
+      );
+
+      if (resQiitaAPI.ok) {
+        const dataQiitaAPI = await resQiitaAPI.json();
+
+        qiitaArticles = qiitaArticles.concat(
+          dataQiitaAPI
+            .filter((article: Article) =>
+              article.title.toLowerCase().includes(input.toLowerCase()),
+            )
+            .map((article: Article) => ({
+              title: article.title,
+              url: article.url,
+              created_at: article.created_at,
+              likes_count: article.likes_count,
+            })),
+        );
+      } else {
+        handleError('Something went wrong. Please try again.');
+        return;
+      }
+    }
+
+    qiitaArticles = qiitaArticles.slice(startIndex, endIndex);
+
+    setQiitaAPIResponse(qiitaArticles);
+    setIsLoading(false);
+  };
+
+  const handleError = (message: any) => {
+    setError(message);
+    setIsLoading(false);
+  };
+
   useEffect(() => {
     if (page > 1) {
-      const fetchQiita = async () => {
-        setIsLoading(true);
-        setSearched(true);
-
-        // the number of articles per page
-        const perPage = 10;
-
-        // page index eg): ページ2で、ページあたり10記事を表示する場合、最初の記事のインデックスは10
-        const pageStart = (page - 1) * perPage;
-        let qiitaArticles: Article[] = [];
-
-        for (let i = 1; qiitaArticles.length < pageStart + perPage; i++) {
-          const resQiitaAPI = await fetch(
-            `https://qiita.com/api/v2/items?query=${input}&page=${i}`,
-            {
-              method: 'GET',
-            },
-          );
-
-          if (resQiitaAPI.ok) {
-            const dataQiitaAPI = await resQiitaAPI.json();
-
-            qiitaArticles = qiitaArticles.concat(
-              dataQiitaAPI
-                .filter((article: Article) =>
-                  article.title.toLowerCase().includes(input.toLowerCase()),
-                )
-                .map((article: Article) => {
-                  return {
-                    title: article.title,
-                    url: article.url,
-                    created_at: article.created_at,
-                    likes_count: article.likes_count,
-                  };
-                }),
-            );
-          } else {
-            setError('Something went wrong. Please try again.');
-            setIsLoading(false);
-            return;
-          }
-        }
-
-        // 現在のページの記事だけを取得
-        qiitaArticles = qiitaArticles.slice(pageStart, pageStart + perPage);
-
-        setQiitaAPIResponse(qiitaArticles);
-        setIsLoading(false);
-      };
-      fetchQiita();
+      const perPage = 10;
+      const pageStart = (page - 1) * perPage;
+      fetchArticlesFromQiita(pageStart, pageStart + perPage);
     }
   }, [page]);
 
@@ -134,50 +135,7 @@ const Chat = () => {
     }
 
     const perPage = 10; // ページあたりの記事数
-    let qiitaArticles: Article[] = []; // Qiitaの記事を保存する配列
-
-    // APIからデータを取得し続ける
-    for (let i = 1; qiitaArticles.length < perPage; i++) {
-      const resQiitaAPI = await fetch(
-        `https://qiita.com/api/v2/items?query=${input}&page=${i}`,
-        {
-          method: 'GET',
-        },
-      );
-
-      if (resQiitaAPI.ok) {
-        try {
-          dataQiitaAPI = await resQiitaAPI.json();
-        } catch (err) {
-          console.error('Failed to parse response:', err);
-        }
-
-        qiitaArticles = qiitaArticles.concat(
-          dataQiitaAPI
-            .filter((article: Article) =>
-              article.title.toLowerCase().includes(input.toLowerCase()),
-            )
-            .map((article: Article) => {
-              return {
-                title: article.title,
-                url: article.url,
-                created_at: article.created_at,
-                likes_count: article.likes_count,
-              };
-            }),
-        );
-      } else {
-        setError('Something went wrong. Please try again.');
-        setIsLoading(false);
-        return;
-      }
-    }
-
-    // 最初の10件の記事だけを取得
-    qiitaArticles = qiitaArticles.slice(0, perPage);
-
-    setQiitaAPIResponse(qiitaArticles);
-    setIsLoading(false);
+    fetchArticlesFromQiita(0, perPage);
   };
 
   const goToNextPage = () => {
