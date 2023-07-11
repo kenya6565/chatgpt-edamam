@@ -43,41 +43,37 @@ const Chat = () => {
   ) => {
     setIsLoading(true);
     setSearched(true);
-    let qiitaArticles: Article[] = [];
 
-    for (let i = 1; qiitaArticles.length < endIndex; i++) {
-      const resQiitaAPI = await fetch(
-        `https://qiita.com/api/v2/items?query=${input}&page=${i}`,
-        {
-          method: 'GET',
-        },
-      );
+    // Send a request to our new API endpoint with the current page number
+    const resQiitaAPI = await fetch('/api/qiita', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ keyword: input, page }),
+    });
 
-      if (resQiitaAPI.ok) {
-        const dataQiitaAPI = await resQiitaAPI.json();
+    if (resQiitaAPI.ok) {
+      const dataQiitaAPI = await resQiitaAPI.json();
+      let qiitaArticles = dataQiitaAPI.articles
+        .filter((article: Article) =>
+          article.title.toLowerCase().includes(input.toLowerCase()),
+        )
+        .map((article: Article) => ({
+          title: article.title,
+          url: article.url,
+          created_at: article.created_at,
+          likes_count: article.likes_count,
+        }));
 
-        qiitaArticles = qiitaArticles.concat(
-          dataQiitaAPI
-            .filter((article: Article) =>
-              article.title.toLowerCase().includes(input.toLowerCase()),
-            )
-            .map((article: Article) => ({
-              title: article.title,
-              url: article.url,
-              created_at: article.created_at,
-              likes_count: article.likes_count,
-            })),
-        );
-      } else {
-        handleError('Something went wrong. Please try again.');
-        return;
-      }
+      qiitaArticles = qiitaArticles.slice(startIndex % 100, endIndex % 100);
+
+      setQiitaAPIResponse(qiitaArticles);
+      setIsLoading(false);
+    } else {
+      handleError('Something went wrong. Please try again.');
+      return;
     }
-
-    qiitaArticles = qiitaArticles.slice(startIndex, endIndex);
-
-    setQiitaAPIResponse(qiitaArticles);
-    setIsLoading(false);
   };
 
   const handleError = (message: any) => {

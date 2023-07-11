@@ -8,10 +8,11 @@ export default async function handler(
   if (req.method === 'POST') {
     // Use the ChatGPT response as a keyword to search articles on Qiita
     const keyword = req.body.keyword;
+    const page = req.body.page || 1;
 
     // send request towards Qiita API with response of Open API
     const qiitaResponse = await axios.get(
-      `https://qiita.com/api/v2/items?page=1&per_page=100&query=${keyword}`,
+      `https://qiita.com/api/v2/items?page=${page}&per_page=100&query=${keyword}`,
       {
         headers: {
           Authorization: `Bearer ${process.env.QIITA_API_KEY}`,
