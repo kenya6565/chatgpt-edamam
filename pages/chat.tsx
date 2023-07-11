@@ -43,11 +43,13 @@ const Chat = () => {
         setIsLoading(true);
         setSearched(true);
 
-        const perPage = 10; // ページあたりの記事数
-        const pageStart = (page - 1) * perPage; // 現在のページで最初の記事のインデックス
-        let qiitaArticles: Article[] = []; // Qiitaの記事を保存する配列
+        // the number of articles per page
+        const perPage = 10;
 
-        // APIからデータを取得し続ける
+        // page index eg): ページ2で、ページあたり10記事を表示する場合、最初の記事のインデックスは10
+        const pageStart = (page - 1) * perPage;
+        let qiitaArticles: Article[] = [];
+
         for (let i = 1; qiitaArticles.length < pageStart + perPage; i++) {
           const resQiitaAPI = await fetch(
             `https://qiita.com/api/v2/items?query=${input}&page=${i}`,
