@@ -43,35 +43,47 @@ const Chat = () => {
         setIsLoading(true);
         setSearched(true);
 
-        const resQiitaAPI = await fetch(
-          `https://qiita.com/api/v2/items?query=${input}&page=${page}`,
-          {
-            method: 'GET',
-          },
-        );
+        const perPage = 10; // ページあたりの記事数
+        const pageStart = (page - 1) * perPage; // 現在のページで最初の記事のインデックス
+        let qiitaArticles: Article[] = []; // Qiitaの記事を保存する配列
 
-        // Check for response status and update state with new data
-        if (resQiitaAPI.ok) {
-          const dataQiitaAPI = await resQiitaAPI.json();
+        // APIからデータを取得し続ける
+        for (let i = 1; qiitaArticles.length < pageStart + perPage; i++) {
+          const resQiitaAPI = await fetch(
+            `https://qiita.com/api/v2/items?query=${input}&page=${i}`,
+            {
+              method: 'GET',
+            },
+          );
 
-          const qiitaArticles: Article[] = dataQiitaAPI
-            .filter((article: Article) =>
-              article.title.toLowerCase().includes(input.toLowerCase()),
-            )
-            .map((article: Article) => {
-              return {
-                title: article.title,
-                url: article.url,
-                created_at: article.created_at,
-                likes_count: article.likes_count,
-              };
-            });
+          if (resQiitaAPI.ok) {
+            const dataQiitaAPI = await resQiitaAPI.json();
 
-          setQiitaAPIResponse(qiitaArticles);
-        } else {
-          setError('Something went wrong. Please try again.');
+            qiitaArticles = qiitaArticles.concat(
+              dataQiitaAPI
+                .filter((article: Article) =>
+                  article.title.toLowerCase().includes(input.toLowerCase()),
+                )
+                .map((article: Article) => {
+                  return {
+                    title: article.title,
+                    url: article.url,
+                    created_at: article.created_at,
+                    likes_count: article.likes_count,
+                  };
+                }),
+            );
+          } else {
+            setError('Something went wrong. Please try again.');
+            setIsLoading(false);
+            return;
+          }
         }
 
+        // 現在のページの記事だけを取得
+        qiitaArticles = qiitaArticles.slice(pageStart, pageStart + perPage);
+
+        setQiitaAPIResponse(qiitaArticles);
         setIsLoading(false);
       };
       fetchQiita();
