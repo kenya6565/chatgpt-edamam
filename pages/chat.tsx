@@ -112,7 +112,6 @@ const Chat = () => {
     });
 
     let dataOpenAPI;
-    let dataQiitaAPI;
 
     if (resOpenAPI.ok) {
       try {
