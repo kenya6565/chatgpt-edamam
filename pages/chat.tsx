@@ -190,7 +190,7 @@ const Chat = () => {
               height="200px"
             >
               <CircularProgress />
-              <Typography ml={2}>少々お待ちください...</Typography>
+              <Typography ml={2}>少々お待ちください....</Typography>
             </Box>
           )}
 
