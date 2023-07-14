@@ -37,43 +37,27 @@ const Chat = () => {
   const [searched, setSearched] = useState(false);
   const [page, setPage] = useState(1);
 
-  const fetchArticlesFromQiita = async (
-    startIndex: number,
-    endIndex: number,
-  ) => {
+  const fetchArticlesFromQiita = async (page: number) => {
     setIsLoading(true);
     setSearched(true);
 
-    // Send a request to our new API endpoint with the current page number
-    const resQiitaAPI = await fetch('/api/qiita', {
+    const resQiitaAPI = await fetch(`/api/qiita`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ keyword: input, page }),
+      body: JSON.stringify({ keyword: input, page: page }),
     });
 
     if (resQiitaAPI.ok) {
       const dataQiitaAPI = await resQiitaAPI.json();
-      let qiitaArticles = dataQiitaAPI.articles
-        .filter((article: Article) =>
-          article.title.toLowerCase().includes(input.toLowerCase()),
-        )
-        .map((article: Article) => ({
-          title: article.title,
-          url: article.url,
-          created_at: article.created_at,
-          likes_count: article.likes_count,
-        }));
-
-      qiitaArticles = qiitaArticles.slice(startIndex % 100, endIndex % 100);
-
-      setQiitaAPIResponse(qiitaArticles);
-      setIsLoading(false);
+      setQiitaAPIResponse(dataQiitaAPI.articles);
     } else {
       handleError('Something went wrong. Please try again.');
       return;
     }
+
+    setIsLoading(false);
   };
 
   const handleError = (message: any) => {
@@ -81,22 +65,8 @@ const Chat = () => {
     setIsLoading(false);
   };
 
-  useEffect(() => {
-    if (page > 1) {
-      const perPage = 10;
-      const pageStart = (page - 1) * perPage;
-      fetchArticlesFromQiita(pageStart, pageStart + perPage);
-    }
-  }, [page]);
-
   const sendMessageToOpenAI = async () => {
     setError(null);
-
-    if (input.length === 0) {
-      setError('Please enter a search term.');
-      return;
-    }
-
     // Reset the state before sending the new request
     setOpenAPIResponse(null);
     setQiitaAPIResponse([]);
@@ -129,12 +99,12 @@ const Chat = () => {
       setError('Something went wrong. Please try again.');
     }
 
-    const perPage = 10; // ページあたりの記事数
-    fetchArticlesFromQiita(0, perPage);
+    fetchArticlesFromQiita(1);
   };
 
   const goToNextPage = () => {
     setPage(page + 1);
+    fetchArticlesFromQiita(page + 1);
   };
 
   return (
