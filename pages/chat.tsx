@@ -102,6 +102,11 @@ const Chat = () => {
     fetchArticlesFromQiita(1);
   };
 
+  const goToPrevPage = () => {
+    setPage(page - 1);
+    fetchArticlesFromQiita(page - 1);
+  };
+
   const goToNextPage = () => {
     setPage(page + 1);
     fetchArticlesFromQiita(page + 1);
@@ -123,7 +128,7 @@ const Chat = () => {
               }}
               onClick={() => window.location.reload()}
             >
-              Qiita GPT
+              QiitaGPT
             </Typography>
             <Paper elevation={3}>
               <Box p={2}>
@@ -243,13 +248,25 @@ const Chat = () => {
             marginBottom={2}
           >
             {!isLoading && searched && qiitaAPIResponse.length > 0 && (
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={goToNextPage}
-              >
-                次のページ
-              </Button>
+              <Fragment>
+                {page > 1 && (
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={goToPrevPage}
+                    style={{ marginRight: '10px' }}
+                  >
+                    前のページ
+                  </Button>
+                )}
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={goToNextPage}
+                >
+                  次のページ
+                </Button>
+              </Fragment>
             )}
           </Box>
         </Grid>
