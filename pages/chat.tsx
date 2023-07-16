@@ -21,11 +21,16 @@ type Message = {
   content: string;
 };
 
+type User = {
+  id: string;
+};
+
 type Article = {
   title: string;
   url: string;
   created_at: string;
   likes_count: number;
+  user: User;
 };
 
 const Chat = () => {
@@ -208,11 +213,19 @@ const Chat = () => {
                             }
                             secondary={
                               <Typography variant="body2" color="textSecondary">
-                                作成日:
+                                作成者:{' '}
+                                <a
+                                  href={`https://qiita.com/${article.user.id}`}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                >
+                                  {article.user.id}
+                                </a>{' '}
+                                作成日:{' '}
                                 {new Date(
                                   article.created_at,
                                 ).toLocaleDateString()}{' '}
-                                • {article.likes_count}いいね
+                                {article.likes_count} いいね
                               </Typography>
                             }
                           />
